@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Checkout</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #d9afd9, #97d9e1);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .checkout-container {
+            width: 40%;
+            margin: 5vh auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            color: #28a745;
+            margin-bottom: 20px;
+            font-size: 26px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-top: 12px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea,
+        select {
+            padding: 10px;
+            margin-top: 6px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            width: 100%;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 90px;
+        }
+
+        .btn-submit {
+            margin-top: 20px;
+            background-color: #28a745;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn-submit:hover {
+            opacity: 0.9;
+        }
+
+        .order-summary {
+            margin-top: 25px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .order-summary h3 {
+            margin-top: 0;
+            color: #007bff;
+            font-size: 18px;
+        }
+
+        .order-summary ul {
+            padding-left: 20px;
+        }
+
+        .order-summary li {
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .total {
+            font-size: 17px;
+            font-weight: bold;
+            margin-top: 10px;
+            text-align: right;
+            color: #333;
+        }
+
+        @media (max-width: 1024px) {
+            .checkout-container {
+                width: 60%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .checkout-container {
+                width: 80%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .checkout-container {
+                width: 95%;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .btn-submit {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="checkout-container">
+        <h1>Order</h1>
+
+        <form method="POST" action="{{ url_for('checkout') }}">
+            <label for="name">Full Name:</label>
+            <input type="text" name="name" required>
+
+            <label for="email">Email Address:</label>
+            <input type="email" name="email" required>
+
+            <label for="address">Shipping Address:</label>
+            <textarea name="address" required></textarea>
+
+            <label for="payment_method">Payment Method:</label>
+            <select name="payment_method" required>
+                <option value="">-- Select --</option>
+                <option value="Cash on Delivery">Cash on Delivery</option>
+                <option value="UPI">UPI</option>
+                <option value="Credit/Debit Card">Credit/Debit Card</option>
+                <option value="Net Banking">Net Banking</option>
+            </select>
+
+            <button type="submit" class="btn-submit">Place Order</button>
+        </form>
+
+        <div class="order-summary">
+            <h3>Order Summary</h3>
+            <ul>
+                {% for item in cart_items %}
+                    <li>{{ item.product.name }} - ₹{{ item.product.price }} x {{ item.quantity }}</li>
+                {% endfor %}
+            </ul>
+            <p class="total">Total: ₹{{ total }}</p>
+        </div>
+    </div>
+
+</body>
+</html>

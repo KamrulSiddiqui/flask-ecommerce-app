@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Shop - Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <script>
+        window.addEventListener('load', () => {
+            const scrollY = sessionStorage.getItem('scrollPos');
+            if (scrollY !== null) {
+                window.scrollTo(0, parseInt(scrollY));
+            }
+        });
+        window.addEventListener('beforeunload', () => {
+            sessionStorage.setItem('scrollPos', window.scrollY);
+        });
+    </script>
+
+    <style>
+        html, body {
+            overflow-x: hidden;
+        }
+
+        .desktop-only { display: block; }
+
+        .mobile-welcome {
+            display: none;
+            text-align: center;
+            font-size: 16px;
+            color: #333;
+           margin: 10px 0 20px;
+        }
+
+        @media (max-width: 500px) {
+            .desktop-only { display: none; }
+            .mobile-welcome { display: block; }
+        }
+
+        @media (max-width: 340px) {
+            .nav-container .logo,
+            .nav-container .nav-right,
+            .nav-container .nav-link,
+            .nav-container .welcome-text {
+                font-size: 12px !important;
+            }
+
+            .nav-container {
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+        }
+
+        .cart-flash-message {
+            text-align: center;
+            color: green;
+            font-weight: 600;
+            margin: 10px 0;
+        }
+
+        @media (max-width: 350px) and (min-width: 300px) {
+            .product-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                padding: 0 10px;
+            }
+
+            .product-card {
+                width: 100%;
+                box-sizing: border-box;
+            }
+        }
+
+        @media (max-width: 299px) {
+            .product-grid {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 0 10px;
+            }
+
+            .product-card {
+                width: 100%;
+                box-sizing: border-box;
+            }
+        }
+
+        .custom-alert {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #28a745;
+            color: white;
+            padding: 12px 24px;
+            font-size: clamp(14px, 2.5vw, 18px);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .custom-alert.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(10px);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <div class="logo">My Shop</div>
+            {% if session.get('user') %}
+                <div class="welcome-text desktop-only">Welcome, {{ session['user'] }}</div>
+            {% endif %}
+            <div class="nav-right" style="display: flex; gap: 10px;">
+                <a href="{{ url_for('my_orders') }}" class="nav-link">My Orders</a>
+                <a href="{{ url_for('cart') }}">🛒 View Cart</a>
+                <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            </div>
+        </div>
+        <div class="menu-links" id="menuLinks">
+            <a href="#">About Us</a>
+            <a href="#products">Products</a>
+            <a href="#">Contact</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </nav>
+
+    <div class="banner">
+        <img src="{{ url_for('static', filename='images/banner.jpg') }}" alt="Shop Banner">
+    </div>
+
+    <h2 class="center-heading">Welcome To My Ecommerce Store</h2>
+
+    <div class="search-form">
+        <form method="GET" action="{{ url_for('index') }}">
+            <input type="text" name="search" placeholder="Search for products...">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    {% if session.get('user') %}
+        <div class="mobile-welcome">Welcome, {{ session['user'] }}</div>
+    {% endif %}
+
+    
+
+    <div class="product-grid" id="products">
+        {% for product in products %}
+            <div class="product-card">
+                <a href="{{ url_for('product_detail', product_id=product['_id']) }}">
+                    <img src="{{ url_for('static', filename='images/' ~ product.image) }}" alt="{{ product.name }}">
+                    <h3>{{ product.name }}</h3>
+                    <p>₹{{ product.price }}</p>
+                </a>
+                <button class="add-to-cart-link" onclick="addToCart('{{ product._id }}')">Add to Cart</button>
+            </div>
+        {% endfor %}
+    </div>
+
+    <button id="backToTopBtn" title="Back to Top">↑</button>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>About Us</h4>
+                <ul>
+                    <li><a href="#">Company Info</a></li>
+                    <li><a href="#">Careers</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <ul>
+                    <li><a href="#"><i class="fas fa-phone"></i> +91 9548995406</a></li>
+                    <li><a href="mailto:davidarav@23gmail.com"><i class="fas fa-envelope"></i> davidarav@23gmail.com</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <ul>
+                    <li><a href="#"><i class="fab fa-facebook"></i> Facebook</a></li>
+                    <li><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2025 My Shop. All rights reserved. Kamrul Siddiqui.
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('menuLinks');
+            menu.classList.toggle('show');
+        }
+
+        window.addEventListener('click', function(e) {
+            if (!e.target.closest('.menu-toggle')) {
+                const menu = document.getElementById('menuLinks');
+                if (menu.classList.contains('show')) {
+                    menu.classList.remove('show');
+                }
+            }
+        });
+
+        const backToTopBtn = document.getElementById("backToTopBtn");
+        window.onscroll = function () {
+            backToTopBtn.style.display = (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) ? "block" : "none";
+        };
+        backToTopBtn.onclick = function () {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        function showCustomAlert(message) {
+            const alertBox = document.createElement('div');
+            alertBox.className = 'custom-alert';
+            alertBox.innerText = message;
+
+            document.body.appendChild(alertBox);
+
+            setTimeout(() => {
+                alertBox.classList.add('show');
+            }, 100);
+
+            setTimeout(() => {
+                alertBox.classList.remove('show');
+                setTimeout(() => alertBox.remove(), 300);
+            }, 2500);
+        }
+
+        function addToCart(productId) {
+            fetch(`/add_to_cart/${productId}`, {
+                method: 'POST'
+            })
+            .then(res => res.text())
+            .then(data => {
+                showCustomAlert("Product added to cart successfully!");
+                const msg = document.getElementById('cart-message');
+                msg.innerText = 'Product added to cart successfully!';
+                msg.style.display = 'block';
+                setTimeout(() => msg.style.display = 'none', 2000);
+            })
+        }
+    </script>
+</body>
+</html>

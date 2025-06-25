@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Signup</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body.auth-body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #d9afd9, #97d9e1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 400px;
+            background: linear-gradient(to right, #ff9a9e, #fad0c4);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .auth-container h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .auth-container form input[type="text"],
+        .auth-container form input[type="email"],
+        .auth-container form input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .auth-container button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+
+        .auth-container button:hover {
+            background-color: #0056b3;
+        }
+
+        .google-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: white;
+            color: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease;
+        }
+
+        .google-btn:hover {
+            background-color: #f2f2f2;
+        }
+
+        .google-logo {
+            width: 18px;
+            height: 18px;
+        }
+
+        .auth-container .auth-links {
+            margin-top: 15px;
+        }
+
+        .auth-container .auth-links a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-container .auth-links a:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
+
+        .flash-message {
+            color: red;
+            font-size: 14px;
+            margin-top: -5px;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        .flash-message.success {
+            color: green;
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 20px;
+            }
+
+            .auth-container h2 {
+                font-size: 22px;
+            }
+
+            .auth-container button,
+            .google-btn {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body class="auth-body">
+    <div class="auth-container">
+        <h2>Signup</h2>
+        <form method="POST" action="{{ url_for('signup') }}">
+            <input type="text" name="username" placeholder="Username" required><br>
+            <input type="email" name="email" placeholder="Email" required><br>
+            <input type="password" name="password" placeholder="Password" required><br>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        {% if category == 'signup_error' %}
+                            <div class="flash-message">{{ message }}</div>
+                        {% elif category == 'signup_success' %}
+                            <div class="flash-message success">{{ message }}</div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <button type="submit">Sign Up</button>
+        </form>
+
+        
+
+        <div class="auth-links">
+            <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+        </div>
+    </div>
+</body>
+</html>

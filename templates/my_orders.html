@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Orders - My Shop</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #d9afd9, #97d9e1);
+            margin: 0;
+            padding: 0;
+        }
+
+        h2 {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .order-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .order-block {
+            width: 90%;
+            max-width: 500px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        .order-meta {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .product-box {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 15px 0;
+            border-top: 1px solid #eee;
+        }
+
+        .product-box:first-child {
+            border-top: none;
+        }
+
+        .text-content {
+            flex: 1;
+        }
+
+        .product-image {
+            width: 160px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .order-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .back-home {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .back-home a {
+            text-decoration: none;
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .order-block {
+                width: 94%;
+                padding: 15px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .product-box {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .product-image {
+                width: 100%;
+                max-width: 300px;
+                height: auto;
+                margin-top: 10px;
+            }
+
+            .order-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .text-content {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>My Orders</h2>
+
+    <div class="order-container">
+        {% for order in orders %}
+            <div class="order-block">
+                <div class="order-meta">
+                    <p><strong>Total:</strong> ₹{{ order.total if order.total else 0 }}</p>
+                    <p><strong>Address:</strong> {{ order.address if order.address else 'N/A' }}</p>
+                    <p><strong>Payment:</strong> {{ order.payment_method if order.payment_method else 'N/A' }}</p>
+                    <p><strong>Ordered on:</strong> 
+                        {% if order.timestamp %}
+                            {{ order.timestamp.strftime('%d %B %Y, %I:%M %p') }}
+                        {% else %}
+                            Unknown Date
+                        {% endif %}
+                    </p>
+                </div>
+
+                {% for item in order['items'] %}
+                    <div class="product-box">
+                        <div class="text-content">
+                            <strong>{{ item.name if item.name else 'Product Name' }}</strong><br>
+                            Quantity: {{ item.quantity if item.quantity else 1 }}<br>
+                            Price: ₹{{ item.price if item.price else 0 }}
+                        </div>
+                        <img class="product-image" src="{{ url_for('static', filename='images/' + (item.image if item.image else 'placeholder.jpg')) }}" alt="{{ item.name if item.name else 'Product' }}">
+                    </div>
+                {% endfor %}
+
+                <div class="order-buttons">
+                    <form method="POST" action="{{ url_for('delete_order', order_id=order._id) }}">
+                        <button type="submit" class="btn btn-danger">Delete Order</button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="back-home">
+        <a href="{{ url_for('index') }}">← Back to Home Page</a>
+    </div>
+</body>
+</html>
+
+
