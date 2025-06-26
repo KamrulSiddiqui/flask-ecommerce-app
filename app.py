@@ -16,7 +16,7 @@ app = Flask(__name__)
 
 
 # MongoDB Configuration
-app.config['MONGO_URI'] = 'mongodb://localhost:27017/ecommerce'
+app.config['MONGO_URI'] = os.getenv('MONGO_URI')
 mongo = PyMongo(app)
 
 # Login required decorator
