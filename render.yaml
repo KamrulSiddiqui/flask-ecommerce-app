@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: flask-ecommerce-app
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app"
+    envVars:
+      - key: MONGO_URI
+        value: YOUR_MONGO_URI
+      - key: SECRET_KEY
+        value: YOUR_SECRET_KEY
